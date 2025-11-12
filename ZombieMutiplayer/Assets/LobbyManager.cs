@@ -61,11 +61,9 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         Debug.Log("OnJoinedRoom");
         Debug.Log($"IsMasterClient: {PhotonNetwork.IsMasterClient}");
 
-        for (int i = 0; i < nameList.Count; i++)
-        {
-            Debug.Log($"nameList: {nameList[i]}");
-        }
-       
+        PhotonNetwork.NickName = myName;
+        Debug.Log($"nick: {PhotonNetwork.NickName}");
+
         PhotonNetwork.LoadLevel("Main");
     }
 
