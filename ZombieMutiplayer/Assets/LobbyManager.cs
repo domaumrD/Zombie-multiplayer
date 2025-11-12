@@ -62,7 +62,14 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         Debug.Log($"IsMasterClient: {PhotonNetwork.IsMasterClient}");
 
         PhotonNetwork.NickName = myName;
-        Debug.Log($"nick: {PhotonNetwork.NickName}");
+
+        Player[] players = PhotonNetwork.PlayerList;
+
+        for (int i = 0; i < players.Length; i++)
+        {
+            Debug.Log($"{players[i].NickName} 입장");
+        }
+
 
         PhotonNetwork.LoadLevel("Main");
     }
