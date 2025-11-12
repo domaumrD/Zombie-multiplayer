@@ -10,8 +10,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     private string gameVersion = "1";
     public Button btn;
     public string myName;
-    public List<string> nameList = new List<string>();
-
+    private Player[] players = PhotonNetwork.PlayerList;
 
     void Start()
     {
@@ -32,7 +31,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsConnected)
         {
-            nameList.Add(myName);
 
             Debug.Log("test");
             PhotonNetwork.JoinRandomRoom();
@@ -63,13 +61,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
         PhotonNetwork.NickName = myName;
 
-        Player[] players = PhotonNetwork.PlayerList;
-
         for (int i = 0; i < players.Length; i++)
         {
             Debug.Log($"{players[i].NickName} 입장");
         }
-
 
         PhotonNetwork.LoadLevel("Main");
     }

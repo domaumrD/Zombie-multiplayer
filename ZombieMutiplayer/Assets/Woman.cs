@@ -31,6 +31,8 @@ public class Woman : MonoBehaviourPun
         else
         {
             animator.SetInteger("Status", 0);
+
+           
         }
        
 
