@@ -1,4 +1,4 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 using Photon.Pun;
 using UnityEngine.UI;
 using Photon.Realtime;
@@ -17,7 +17,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         btn.interactable = false;
         btn.onClick.AddListener(() =>
         {
-            Debug.Log("∑Î ¡¢º” ø‰√ª");
+            Debug.Log("Î£∏ Ï†ëÏÜç ÏöîÏ≤≠");
             Connect();
         });
     }
@@ -26,20 +26,19 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         Debug.Log($"Isconnected:  {PhotonNetwork.IsConnected}");
 
-
         if (PhotonNetwork.IsConnected)
         {
+            Debug.Log("test");
             PhotonNetwork.JoinRandomRoom();
-            PhotonNetwork.LoadLevel("Main");
-
         }
         else
         {
             Debug.Log("failed");
             PhotonNetwork.ConnectUsingSettings();
         }
-
     }
+
+   
 
     public override void OnConnectedToMaster()
     {
@@ -50,16 +49,18 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public override void OnDisconnected(DisconnectCause cause)
     {
         Debug.Log("OnDisconnected");
+        PhotonNetwork.ConnectUsingSettings();
     }
 
     public override void OnJoinedRoom()
     {
         Debug.Log("OnJoinedRoom");
-        Debug.Log(PhotonNetwork.IsMasterClient);
-       
+        Debug.Log($"IsMasterClient: {PhotonNetwork.IsMasterClient}");
+
+        PhotonNetwork.LoadLevel("Main");
     }
 
-    public override void OnJoinRoomFailed(short returnCode, string message)
+    public override void OnJoinRandomFailed(short returnCode, string message)
     {
         Debug.Log($"OnJoinRoomFailed {returnCode}, {message}");
 
