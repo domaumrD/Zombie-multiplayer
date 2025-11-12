@@ -30,6 +30,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsConnected)
         {
             PhotonNetwork.JoinRandomRoom();
+            PhotonNetwork.LoadLevel("Main");
+
         }
         else
         {
@@ -54,6 +56,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("OnJoinedRoom");
         Debug.Log(PhotonNetwork.IsMasterClient);
+       
     }
 
     public override void OnJoinRoomFailed(short returnCode, string message)
