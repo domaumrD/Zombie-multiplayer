@@ -19,8 +19,7 @@ public class Woman : MonoBehaviourPun
         h = Input.GetAxis("Horizontal");
         v = Input.GetAxis("Vertical");
 
-        Vector3 dir = new Vector3(h, 0, v);
-   
+        Vector3 dir = new Vector3(h, 0, v);   
 
         if (dir != Vector3.zero)
         {           

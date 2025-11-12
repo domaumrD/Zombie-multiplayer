@@ -1,14 +1,17 @@
-﻿using UnityEngine;
+﻿using NUnit.Framework.Interfaces;
 using Photon.Pun;
-using UnityEngine.UI;
 using Photon.Realtime;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
     private string gameVersion = "1";
     public Button btn;
+    public string myName;
+    public List<string> nameList = new List<string>();
 
-    public GameManager gameManager;
 
     void Start()
     {
@@ -29,6 +32,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsConnected)
         {
+            nameList.Add(myName);
+
             Debug.Log("test");
             PhotonNetwork.JoinRandomRoom();
         }
@@ -56,16 +61,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         Debug.Log("OnJoinedRoom");
         Debug.Log($"IsMasterClient: {PhotonNetwork.IsMasterClient}");
 
-        if(PhotonNetwork.IsMasterClient == true)
+        for (int i = 0; i < nameList.Count; i++)
         {
-            Debug.Log($"[{gameManager.nickName}] 님이 입장했습니다.");
+            Debug.Log($"nameList: {nameList[i]}");
         }
-        else
-        {
-            Debug.Log($"[{gameManager.nickName}] 님이 입장했습니다.");
-        }
-
-            PhotonNetwork.LoadLevel("Main");
+       
+        PhotonNetwork.LoadLevel("Main");
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)
