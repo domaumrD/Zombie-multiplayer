@@ -10,6 +10,6 @@ public class GameManager : MonoBehaviour
         var initpos = Random.insideUnitSphere * 5f;
         initpos.y = 0;
 
-        PhotonNetwork.Instantiate("Woman", initpos, Quaternion.identity);
+        GameObject go = PhotonNetwork.Instantiate("Woman", initpos, Quaternion.identity);
     }   
 }
