@@ -7,8 +7,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 {
     private string gameVersion = "1";
     public Button btn;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+       
     void Start()
     {
 
@@ -34,7 +33,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         }
         else
         {
-
+            Debug.Log("failed");
+            PhotonNetwork.ConnectUsingSettings();
         }
 
     }
