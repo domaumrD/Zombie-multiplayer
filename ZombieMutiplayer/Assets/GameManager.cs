@@ -4,7 +4,10 @@ using Photon.Realtime;
 
 
 public class GameManager : MonoBehaviour
-{    
+{
+
+    public string nickName;
+
     void Start()
     {
         var initpos = Random.insideUnitSphere * 5f;

@@ -7,10 +7,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 {
     private string gameVersion = "1";
     public Button btn;
-       
+
+    public GameManager gameManager;
+
     void Start()
     {
-
         PhotonNetwork.GameVersion = gameVersion;
         PhotonNetwork.ConnectUsingSettings();
 
@@ -36,9 +37,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             Debug.Log("failed");
             PhotonNetwork.ConnectUsingSettings();
         }
-    }
-
-   
+    }   
 
     public override void OnConnectedToMaster()
     {
@@ -57,7 +56,16 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         Debug.Log("OnJoinedRoom");
         Debug.Log($"IsMasterClient: {PhotonNetwork.IsMasterClient}");
 
-        PhotonNetwork.LoadLevel("Main");
+        if(PhotonNetwork.IsMasterClient == true)
+        {
+            Debug.Log($"[{gameManager.nickName}] 님이 입장했습니다.");
+        }
+        else
+        {
+            Debug.Log($"[{gameManager.nickName}] 님이 입장했습니다.");
+        }
+
+            PhotonNetwork.LoadLevel("Main");
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)
