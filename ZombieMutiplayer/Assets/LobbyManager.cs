@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
     public static LobbyManager Instance;
-
+    private List<RoomInfo> cachedRoomList = new List<RoomInfo>();
     private string gameVersion = "1";
     public GameObject inputNickName;
 
@@ -105,6 +105,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         lobbyText.text = "Room";
 
+        OnRoomListUpdate(cachedRoomList);
+
         Debug.Log("OnJoinedRoom");
         Debug.Log($"IsMasterClient: {PhotonNetwork.IsMasterClient}");
 
@@ -153,6 +155,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         createRoomBtn.gameObject.SetActive(false);
         Debug.Log("방을 만듭니다.");
         PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2 });
+    }
+
+    public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    {
+        cachedRoomList = roomList;
+        Debug.Log($"현재 방 갯수: {cachedRoomList.Count}");
     }
 
 }
