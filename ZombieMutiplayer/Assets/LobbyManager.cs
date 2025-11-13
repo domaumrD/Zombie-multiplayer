@@ -1,5 +1,4 @@
-﻿using NUnit.Framework.Interfaces;
-using Photon.Pun;
+﻿using Photon.Pun;
 using Photon.Realtime;
 using System;
 using System.Collections.Generic;
@@ -95,8 +94,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedLobby()
     {
-
-
         lobbyText.text = "Lobby";
         LobbyRoomList.SetActive(true);
         NolobbyRoomText.gameObject.SetActive(true);
@@ -123,7 +120,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
         Debug.Log("OnJoinedRoom");
         Debug.Log($"IsMasterClient: {PhotonNetwork.IsMasterClient}");
-
+      
         Debug.Log(PhotonNetwork.NickName);
 
         for (int i = 0; i < players.Length; i++)
@@ -135,6 +132,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         NolobbyRoomText.gameObject.SetActive(false);
 
         //PhotonNetwork.LoadLevel("Main");
+        OnRoom();
+    }
+
+    public void OnRoom()
+    {
+        Debug.Log($"{PhotonNetwork.CountOfRooms}");
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)
@@ -174,8 +177,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     }
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
-    {
-        
+    {        
         cachedRoomList = roomList;
         Debug.Log($"OnRoomListUpdate rawCount: {roomList.Count}");
     }
