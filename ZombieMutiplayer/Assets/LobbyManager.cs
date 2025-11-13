@@ -52,7 +52,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         createRoomBtn.onClick.AddListener(() => { CreateRoom(); });
         checkBtn.onClick.AddListener(() =>
         {
-            Debug.Log($"현재 캐싱된 방 갯수: {cachedRoomList.Count}");
+            Debug.Log($"현재 갯수 : {PhotonNetwork.CountOfRooms}");
+            //Debug.Log($"현재 캐싱된 방 갯수: {cachedRoomList.Count}");
         });
 
         lobbyText.text = "Title";
@@ -138,6 +139,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public void OnRoom()
     {
         Debug.Log($"{PhotonNetwork.CountOfRooms}");
+        roomChagne(cachedRoomList);
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)
@@ -177,7 +179,9 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     }
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
-    {        
+    {
+
+        Debug.Log($"포튼 방 갯수 {PhotonNetwork.CountOfRooms}");
         cachedRoomList = roomList;
         Debug.Log($"OnRoomListUpdate rawCount: {roomList.Count}");
     }
