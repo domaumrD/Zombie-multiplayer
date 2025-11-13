@@ -86,7 +86,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         LobbyRoomList.SetActive(true);
         NolobbyRoomText.gameObject.SetActive(true);
         createRoomBtn.gameObject.SetActive(true);
-        Debug.Log("I'm in Lobby");  
+        Debug.Log("I'm in Lobby");
+
+        OnRoomListUpdate(cachedRoomList);
+
     }
 
 
@@ -103,9 +106,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        lobbyText.text = "Room";
-
-        OnRoomListUpdate(cachedRoomList);
+        lobbyText.text = "Room";       
 
         Debug.Log("OnJoinedRoom");
         Debug.Log($"IsMasterClient: {PhotonNetwork.IsMasterClient}");
