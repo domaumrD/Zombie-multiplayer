@@ -1,6 +1,7 @@
 ﻿using Photon.Pun;
 using Photon.Realtime;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -25,9 +26,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public Button leaveRoomBtn;
     public Button checkBtn;
 
-    public Action<List<RoomInfo>> roomChagne;
-
-    private List<RoomInfo> currentRooms = new List<RoomInfo>();
+    Dictionary<string, RoomInfo> cachedRooms = new Dictionary<string, RoomInfo>();
 
     private void Awake()
     {
@@ -47,18 +46,15 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
-
-        roomChagne = OnRoomListUpdate;
-
         createRoomBtn.onClick.AddListener(() => { CreateRoom(); });
         leaveRoomBtn.onClick.AddListener(() => { LeaveRoom(); });
 
         checkBtn.onClick.AddListener(() =>
         {
             Debug.Log($"현재 갯수 : {PhotonNetwork.CountOfRooms}");
-            //Debug.Log($"현재 캐싱된 방 갯수: {cachedRoomList.Count}");
+            Debug.Log($"현재 캐싱된 방 갯수: {cachedRooms.Count}");
 
-            roomChagne(currentRooms);
+           
         });
 
         lobbyText.text = "Title";
@@ -152,7 +148,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         Debug.Log($"OnJoinRoomFailed {returnCode}, {message}");
 
-        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2 });
+        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2 , IsVisible = true , IsOpen = true});
     }
 
     public override void OnCreatedRoom()
@@ -179,7 +175,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         createRoomBtn.gameObject.SetActive(false);
         Debug.Log("방을 만듭니다.");
-        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2 });
+        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2, IsVisible = true });
+        
     }
 
     public void LeaveRoom()
@@ -195,21 +192,25 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        currentRooms.Clear(); // 기존 리스트 초기화
-
-        Debug.Log("=== 방 리스트 업데이트 ===");
-
-        foreach (RoomInfo room in roomList)
+        // 1) 캐시에 반영
+        foreach (var info in roomList)
         {
-            // 이미 닫힌 방은 제외
-            if (!room.RemovedFromList)
+            if (info.RemovedFromList || info.PlayerCount == 0)
             {
-                currentRooms.Add(room);
-                // 방 정보 출력
-                Debug.Log($"Room Name: {room.Name}, Players: {room.PlayerCount}/{room.MaxPlayers}, IsOpen: {room.IsOpen}, IsVisible: {room.IsVisible}");
+                // 아무도 없거나 삭제된 방은 캐시에서 제거
+                cachedRooms.Remove(info.Name);
+            }
+            else
+            {
+                // 존재하는 방이면 캐시에 추가/갱신
+                cachedRooms[info.Name] = info;
             }
         }
 
+        // 2) 전체 캐시 기준으로 리스트 만들기
+        var allRooms = new List<RoomInfo>(cachedRooms.Values);
+        Debug.Log($"OnRoomListUpdate rawCount: {roomList.Count}, cachedCount: {allRooms.Count}");
 
+       
     }
 }
