@@ -25,6 +25,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public Button createRoomBtn;
     public Button checkBtn;
 
+    public Action<List<RoomInfo>> roomChagne;
+
     private List<RoomInfo> cachedRoomList = new List<RoomInfo>();
 
     private void Awake()
@@ -45,6 +47,9 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
+
+        roomChagne = OnRoomListUpdate;
+
         createRoomBtn.onClick.AddListener(() => { CreateRoom(); });
         checkBtn.onClick.AddListener(() =>
         {
@@ -142,6 +147,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public override void OnCreatedRoom()
     {
         Debug.Log("OnCreatedRoom");
+
+        roomChagne(cachedRoomList);
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
@@ -168,10 +175,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        Debug.Log($"OnRoomListUpdate rawCount: {roomList.Count}");
-
-       
+        
         cachedRoomList = roomList;
+        Debug.Log($"OnRoomListUpdate rawCount: {roomList.Count}");
     }
+
 
 }
