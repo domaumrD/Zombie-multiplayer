@@ -26,7 +26,9 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public Button leaveRoomBtn;
     public Button checkBtn;
 
-    //Dictionary<string, RoomInfo> cachedRooms = new Dictionary<string, RoomInfo>();
+    public Dictionary<string, RoomInfo> cachedRooms = new Dictionary<string, RoomInfo>();
+
+    public UIRoomList uiRoomList;
 
     private void Awake()
     {
@@ -205,7 +207,26 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        Debug.Log("리스트 변경됨!");
-       
+        foreach (var info in roomList)
+        {
+            if (info.RemovedFromList || info.PlayerCount == 0)
+            {
+                // 아무도 없거나 삭제된 방은 캐시에서 제거
+                cachedRooms.Remove(info.Name);
+            }
+            else
+            {
+                // 존재하는 방이면 캐시에 추가/갱신
+                cachedRooms[info.Name] = info;
+            }
+        }
+
+        // 2) 전체 캐시 기준으로 리스트 만들기
+        var allRooms = new List<RoomInfo>(cachedRooms.Values);
+
+        Debug.Log($"OnRoomListUpdate rawCount: {roomList.Count}, cachedCount: {allRooms.Count}");
+
+        uiRoomList.Create();
+
     }
 }
