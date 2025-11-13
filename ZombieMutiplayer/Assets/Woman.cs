@@ -1,7 +1,6 @@
 using Photon.Realtime;
 using Photon.Pun;
 using UnityEngine;
-using Unity.VisualScripting;
 
 public class Woman : MonoBehaviourPun
 {
@@ -30,12 +29,11 @@ public class Woman : MonoBehaviourPun
         }
         else
         {
-            animator.SetInteger("Status", 0);
-
-           
+            animator.SetInteger("Status", 0);           
         }
-       
+      
 
+       
     }
 
 }
