@@ -88,7 +88,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         createRoomBtn.gameObject.SetActive(true);
         Debug.Log("I'm in Lobby");
 
-        OnRoomListUpdate(cachedRoomList);
+        if (cachedRoomList != null && cachedRoomList.Count > 0)
+        {
+            Debug.Log($"로비 입장 직후 캐시된 방 갯수: {cachedRoomList.Count}");
+        }
 
     }
 
