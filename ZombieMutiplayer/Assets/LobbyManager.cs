@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
     public static LobbyManager Instance;
-  
+
     private string gameVersion = "1";
     public GameObject inputNickName;
 
@@ -22,16 +22,17 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public TMP_Text NolobbyRoomText;
 
     public Button createRoomBtn;
+    public Button leaveRoomBtn;
     public Button checkBtn;
 
     public Action<List<RoomInfo>> roomChagne;
 
-    private List<RoomInfo> cachedRoomList = new List<RoomInfo>();
+    private List<RoomInfo> currentRooms = new List<RoomInfo>();
 
     private void Awake()
     {
 
-        if(Instance == null)
+        if (Instance == null)
         {
             Instance = this;
         }
@@ -50,10 +51,14 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         roomChagne = OnRoomListUpdate;
 
         createRoomBtn.onClick.AddListener(() => { CreateRoom(); });
+        leaveRoomBtn.onClick.AddListener(() => { LeaveRoom(); });
+
         checkBtn.onClick.AddListener(() =>
         {
             Debug.Log($"현재 갯수 : {PhotonNetwork.CountOfRooms}");
             //Debug.Log($"현재 캐싱된 방 갯수: {cachedRoomList.Count}");
+
+            roomChagne(currentRooms);
         });
 
         lobbyText.text = "Title";
@@ -62,6 +67,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         LobbyRoomList.SetActive(false);
         NolobbyRoomText.gameObject.SetActive(false);
         createRoomBtn.gameObject.SetActive(false);
+        leaveRoomBtn.gameObject.SetActive(false);
         uiNicknameView.onClickSubmit = SetNickName;
 
     }
@@ -77,7 +83,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
             Debug.Log("test");
             //PhotonNetwork.JoinRandomRoom();
-          
+
             JoinLobby();
         }
         else
@@ -99,13 +105,13 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         LobbyRoomList.SetActive(true);
         NolobbyRoomText.gameObject.SetActive(true);
         createRoomBtn.gameObject.SetActive(true);
-        Debug.Log("I'm in Lobby");            
+        Debug.Log("I'm in Lobby");
 
     }
 
 
     public override void OnConnectedToMaster()
-    {       
+    {
         Debug.Log("OnConnectedToMaster");
     }
 
@@ -117,11 +123,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        lobbyText.text = "Room";       
+        lobbyText.text = "Room";
 
         Debug.Log("OnJoinedRoom");
         Debug.Log($"IsMasterClient: {PhotonNetwork.IsMasterClient}");
-      
+
         Debug.Log(PhotonNetwork.NickName);
 
         for (int i = 0; i < players.Length; i++)
@@ -138,8 +144,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public void OnRoom()
     {
+        leaveRoomBtn.gameObject.SetActive(true);
         Debug.Log($"{PhotonNetwork.CountOfRooms}");
-        roomChagne(cachedRoomList);
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)
@@ -152,8 +158,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public override void OnCreatedRoom()
     {
         Debug.Log("OnCreatedRoom");
-
-        roomChagne(cachedRoomList);
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
@@ -167,7 +171,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
         myName = nickName;
         PhotonNetwork.NickName = nickName;
-        
+
         Connect();
     }
 
@@ -178,13 +182,34 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2 });
     }
 
-    public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    public void LeaveRoom()
     {
-
-        Debug.Log($"포튼 방 갯수 {PhotonNetwork.CountOfRooms}");
-        cachedRoomList = roomList;
-        Debug.Log($"OnRoomListUpdate rawCount: {roomList.Count}");
+        Debug.Log("방에서 나갑니다");
+        PhotonNetwork.LeaveRoom();
+        leaveRoomBtn.gameObject.SetActive(false);
+        createRoomBtn.gameObject.SetActive(true);
+        lobbyText.text = "Room";
+        NolobbyRoomText.gameObject.SetActive(true);
+        LobbyRoomList.gameObject.SetActive(true);
     }
 
+    public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    {
+        currentRooms.Clear(); // 기존 리스트 초기화
 
+        Debug.Log("=== 방 리스트 업데이트 ===");
+
+        foreach (RoomInfo room in roomList)
+        {
+            // 이미 닫힌 방은 제외
+            if (!room.RemovedFromList)
+            {
+                currentRooms.Add(room);
+                // 방 정보 출력
+                Debug.Log($"Room Name: {room.Name}, Players: {room.PlayerCount}/{room.MaxPlayers}, IsOpen: {room.IsOpen}, IsVisible: {room.IsVisible}");
+            }
+        }
+
+
+    }
 }
