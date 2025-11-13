@@ -9,6 +9,8 @@ using UnityEngine.UI;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
+    public static LobbyManager Instance;
+
     private string gameVersion = "1";
     public GameObject inputNickName;
 
@@ -22,8 +24,25 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public Button createRoomBtn;
 
+    private void Awake()
+    {
+
+        if(Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
+        DontDestroyOnLoad(gameObject);
+
+    }
+
     void Start()
     {
+        createRoomBtn.onClick.AddListener(() => { CreateRoom(); });
         lobbyText.text = "Title";
         PhotonNetwork.GameVersion = gameVersion;
         inputNickName.SetActive(true);
@@ -72,11 +91,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
 
     public override void OnConnectedToMaster()
-    {
-
-        //btn.gameObject.SetActive(true);
-        //btn.interactable = true;
-      
+    {       
         Debug.Log("OnConnectedToMaster");
     }
 
@@ -88,15 +103,20 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
+        lobbyText.text = "Room";
+
         Debug.Log("OnJoinedRoom");
         Debug.Log($"IsMasterClient: {PhotonNetwork.IsMasterClient}");
 
-        //PhotonNetwork.NickName = myName;
+        Debug.Log(PhotonNetwork.NickName);
 
         for (int i = 0; i < players.Length; i++)
         {
             Debug.Log($"{players[i].NickName} 입장");
         }
+
+        LobbyRoomList.SetActive(false);
+        NolobbyRoomText.gameObject.SetActive(false);
 
         //PhotonNetwork.LoadLevel("Main");
     }
@@ -120,10 +140,19 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public void SetNickName(string nickName)
     {
+        PhotonNetwork.ConnectUsingSettings();
+
         myName = nickName;
         PhotonNetwork.NickName = nickName;
-        PhotonNetwork.ConnectUsingSettings();
+        
         Connect();
+    }
+
+    public void CreateRoom()
+    {
+        createRoomBtn.gameObject.SetActive(false);
+        Debug.Log("방을 만듭니다.");
+        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2 });
     }
 
 }
