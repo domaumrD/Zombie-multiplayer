@@ -26,7 +26,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public Button leaveRoomBtn;
     public Button checkBtn;
 
-    Dictionary<string, RoomInfo> cachedRooms = new Dictionary<string, RoomInfo>();
+    //Dictionary<string, RoomInfo> cachedRooms = new Dictionary<string, RoomInfo>();
 
     private void Awake()
     {
@@ -52,7 +52,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         checkBtn.onClick.AddListener(() =>
         {
             Debug.Log($"현재 갯수 : {PhotonNetwork.CountOfRooms}");
-            Debug.Log($"현재 캐싱된 방 갯수: {cachedRooms.Count}");
+            //Debug.Log($"현재 캐싱된 방 갯수: {cachedRooms.Count}");
 
            
         });
@@ -65,7 +65,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         createRoomBtn.gameObject.SetActive(false);
         leaveRoomBtn.gameObject.SetActive(false);
         uiNicknameView.onClickSubmit = SetNickName;
-
+        PhotonNetwork.ConnectUsingSettings();
     }
 
     private void Connect()
@@ -102,6 +102,9 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         NolobbyRoomText.gameObject.SetActive(true);
         createRoomBtn.gameObject.SetActive(true);
         Debug.Log("I'm in Lobby");
+
+        Debug.Log($"내가 로비에 있는지 확인: {PhotonNetwork.InLobby}");
+    
 
     }
 
@@ -142,6 +145,16 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         leaveRoomBtn.gameObject.SetActive(true);
         Debug.Log($"{PhotonNetwork.CountOfRooms}");
+
+        if (PhotonNetwork.InRoom)
+        {
+            Debug.Log("현재 방 이름 : " + PhotonNetwork.CurrentRoom.Name);
+            Debug.Log("현재 방 인원수 : " + PhotonNetwork.CurrentRoom.PlayerCount);
+            Debug.Log("현재 방 최대인원수 : " + PhotonNetwork.CurrentRoom.MaxPlayers);
+            Debug.Log("현재 방 열려있는지 : " + PhotonNetwork.CurrentRoom.IsOpen);
+            Debug.Log("현재 방 비공개 여부 : " + PhotonNetwork.CurrentRoom.IsVisible);
+
+        }
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)
@@ -192,25 +205,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        // 1) 캐시에 반영
-        foreach (var info in roomList)
-        {
-            if (info.RemovedFromList || info.PlayerCount == 0)
-            {
-                // 아무도 없거나 삭제된 방은 캐시에서 제거
-                cachedRooms.Remove(info.Name);
-            }
-            else
-            {
-                // 존재하는 방이면 캐시에 추가/갱신
-                cachedRooms[info.Name] = info;
-            }
-        }
-
-        // 2) 전체 캐시 기준으로 리스트 만들기
-        var allRooms = new List<RoomInfo>(cachedRooms.Values);
-        Debug.Log($"OnRoomListUpdate rawCount: {roomList.Count}, cachedCount: {allRooms.Count}");
-
+        Debug.Log("리스트 변경됨!");
        
     }
 }
