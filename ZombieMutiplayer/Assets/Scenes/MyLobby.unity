@@ -2661,6 +2661,7 @@ MonoBehaviour:
   LobbyRoomList: {fileID: 2116523510}
   NolobbyRoomText: {fileID: 1218330510}
   createRoomBtn: {fileID: 21993990}
+  checkBtn: {fileID: 517931260}
 --- !u!4 &2072663633
 Transform:
   m_ObjectHideFlags: 0
