@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
     public static LobbyManager Instance;
-    private List<RoomInfo> cachedRoomList = new List<RoomInfo>();
+  
     private string gameVersion = "1";
     public GameObject inputNickName;
 
@@ -23,6 +23,9 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public TMP_Text NolobbyRoomText;
 
     public Button createRoomBtn;
+    public Button checkBtn;
+
+    private List<RoomInfo> cachedRoomList = new List<RoomInfo>();
 
     private void Awake()
     {
@@ -43,6 +46,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     void Start()
     {
         createRoomBtn.onClick.AddListener(() => { CreateRoom(); });
+        checkBtn.onClick.AddListener(() =>
+        {
+            Debug.Log($"현재 캐싱된 방 갯수: {cachedRoomList.Count}");
+        });
+
         lobbyText.text = "Title";
         PhotonNetwork.GameVersion = gameVersion;
         inputNickName.SetActive(true);
@@ -82,16 +90,13 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedLobby()
     {
+
+
         lobbyText.text = "Lobby";
         LobbyRoomList.SetActive(true);
         NolobbyRoomText.gameObject.SetActive(true);
         createRoomBtn.gameObject.SetActive(true);
-        Debug.Log("I'm in Lobby");
-
-        if (cachedRoomList != null && cachedRoomList.Count > 0)
-        {
-            Debug.Log($"로비 입장 직후 캐시된 방 갯수: {cachedRoomList.Count}");
-        }
+        Debug.Log("I'm in Lobby");            
 
     }
 
@@ -163,8 +168,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
+        Debug.Log($"OnRoomListUpdate rawCount: {roomList.Count}");
+
+       
         cachedRoomList = roomList;
-        Debug.Log($"현재 방 갯수: {cachedRoomList.Count}");
     }
 
 }
