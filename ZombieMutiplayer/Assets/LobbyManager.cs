@@ -246,6 +246,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         Debug.Log(myName);
         PhotonNetwork.LeaveRoom();
         leaveRoomBtn.gameObject.SetActive(false);
+        gameStartBtn.gameObject.SetActive(false);
         createRoomBtn.gameObject.SetActive(true);
         lobbyText.text = "Room";
         NolobbyRoomText.gameObject.SetActive(true);
