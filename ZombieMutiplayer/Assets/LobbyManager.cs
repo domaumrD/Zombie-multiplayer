@@ -13,6 +13,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public static LobbyManager Instance;
 
     private string gameVersion = "1";
+    private bool reconnet = false;
+
     public GameObject inputNickName;
 
     public string myName;
@@ -55,9 +57,15 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
         checkBtn.onClick.AddListener(() =>
         {
-            Debug.Log($"현재 갯수 : {PhotonNetwork.CountOfRooms}");
-            //Debug.Log($"현재 캐싱된 방 갯수: {cachedRooms.Count}");
 
+            Debug.Log($"내가 로비에 있는지 확인: {PhotonNetwork.InLobby}");
+            Debug.Log($"내가 룸에 있는지 확인: {PhotonNetwork.InRoom}");
+            Debug.Log($"데이터 캐시 갯수 : {cachedRooms.Count}");            
+
+            foreach (RoomInfo room in cachedRooms.Values)
+            {
+                Debug.Log($"{room.Name}");
+            }
 
         });
 
@@ -75,7 +83,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     private void Connect()
     {
-
         Debug.Log($"Isconnected:  {PhotonNetwork.IsConnected}");
 
         if (PhotonNetwork.IsConnected)
@@ -93,7 +100,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             PhotonNetwork.ConnectUsingSettings();
         }
     }
-
+     
     public void JoinLobby()
     {
         PhotonNetwork.JoinLobby();
@@ -115,16 +122,20 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             Debug.Log("I'm in Lobby");
 
         }
+       
 
         Debug.Log($"내가 로비에 있는지 확인: {PhotonNetwork.InLobby}");
-
-
     }
 
 
     public override void OnConnectedToMaster()
     {
-        Debug.Log("OnConnectedToMaster");
+        Debug.Log("OnConnectedToMaster");      
+
+        if (reconnet == true)
+        {
+            PhotonNetwork.JoinLobby();
+        }
     }
 
     public override void OnDisconnected(DisconnectCause cause)
@@ -213,8 +224,9 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     }
 
     public void LeaveRoom()
-    {
+    {        
         Debug.Log("방에서 나갑니다");
+        Debug.Log(myName);
         PhotonNetwork.LeaveRoom();
         leaveRoomBtn.gameObject.SetActive(false);
         createRoomBtn.gameObject.SetActive(true);
@@ -222,6 +234,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         NolobbyRoomText.gameObject.SetActive(true);
         LobbyRoomList.gameObject.SetActive(true);
 
+    }
+
+    public override void OnLeftRoom()
+    {
+        reconnet = true;
+        Debug.Log("방에서 나가기 호출 ");
     }
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)

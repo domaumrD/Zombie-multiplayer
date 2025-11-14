@@ -9,7 +9,9 @@ public class UIRoomList : MonoBehaviour
     public Transform contentPointion;
        
     public void Create()
-    {              
+    {
+        Remove();
+
         foreach (RoomInfo room in LobbyManager.Instance.cachedRooms.Values)
         {
             GameObject go = Instantiate(cellPrefab, contentPointion);
@@ -29,9 +31,8 @@ public class UIRoomList : MonoBehaviour
         Debug.Log("¹æ Á¦°Å!");
 
         for(int i = 0; i < contentPointion.childCount; i++)
-        {
-            Debug.Log(contentPointion.GetChild(i).gameObject.name);
-            //Destroy(contentPointion.GetChild(i).gameObject);
+        {                       
+            Destroy(contentPointion.GetChild(i).gameObject);
         }
     }
 
