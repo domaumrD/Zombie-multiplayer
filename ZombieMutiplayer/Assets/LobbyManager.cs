@@ -29,6 +29,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public Dictionary<string, RoomInfo> cachedRooms = new Dictionary<string, RoomInfo>();
 
     public UIRoomList uiRoomList;
+    public GameObject uiLoading;
 
     private void Awake()
     {
@@ -56,7 +57,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             Debug.Log($"현재 갯수 : {PhotonNetwork.CountOfRooms}");
             //Debug.Log($"현재 캐싱된 방 갯수: {cachedRooms.Count}");
 
-           
+
         });
 
         lobbyText.text = "Title";
@@ -66,6 +67,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         NolobbyRoomText.gameObject.SetActive(false);
         createRoomBtn.gameObject.SetActive(false);
         leaveRoomBtn.gameObject.SetActive(false);
+        uiLoading.gameObject.SetActive(false);
         uiNicknameView.onClickSubmit = SetNickName;
         PhotonNetwork.ConnectUsingSettings();
     }
@@ -99,14 +101,22 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedLobby()
     {
-        lobbyText.text = "Lobby";
-        LobbyRoomList.SetActive(true);
-        NolobbyRoomText.gameObject.SetActive(true);
-        createRoomBtn.gameObject.SetActive(true);
-        Debug.Log("I'm in Lobby");
+
+        uiLoading.gameObject.SetActive(true);
+
+        if (PhotonNetwork.InLobby == true)
+        {
+            uiLoading.gameObject.SetActive(false);
+            lobbyText.text = "Lobby";
+            LobbyRoomList.SetActive(true);
+            NolobbyRoomText.gameObject.SetActive(true);
+            createRoomBtn.gameObject.SetActive(true);
+            Debug.Log("I'm in Lobby");
+
+        }
 
         Debug.Log($"내가 로비에 있는지 확인: {PhotonNetwork.InLobby}");
-    
+
 
     }
 
@@ -163,7 +173,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         Debug.Log($"OnJoinRoomFailed {returnCode}, {message}");
 
-        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2 , IsVisible = true , IsOpen = true});
+        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2, IsVisible = true, IsOpen = true });
     }
 
     public override void OnCreatedRoom()
@@ -191,7 +201,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         createRoomBtn.gameObject.SetActive(false);
         Debug.Log("방을 만듭니다.");
         PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2, IsVisible = true });
-        
+
     }
 
     public void LeaveRoom()
@@ -203,11 +213,14 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         lobbyText.text = "Room";
         NolobbyRoomText.gameObject.SetActive(true);
         LobbyRoomList.gameObject.SetActive(true);
+
+        uiRoomList.Remove();
+
     }
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        foreach (var info in roomList)
+        foreach (RoomInfo info in roomList)
         {
             if (info.RemovedFromList || info.PlayerCount == 0)
             {
@@ -222,7 +235,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         }
 
         // 2) 전체 캐시 기준으로 리스트 만들기
-        var allRooms = new List<RoomInfo>(cachedRooms.Values);
+        List<RoomInfo> allRooms = new List<RoomInfo>(cachedRooms.Values);
 
         Debug.Log($"OnRoomListUpdate rawCount: {roomList.Count}, cachedCount: {allRooms.Count}");
 
