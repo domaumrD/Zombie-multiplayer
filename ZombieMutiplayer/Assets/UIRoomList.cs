@@ -13,10 +13,9 @@ public class UIRoomList : MonoBehaviour
         foreach (RoomInfo room in LobbyManager.Instance.cachedRooms.Values)
         {
             GameObject go = Instantiate(cellPrefab, contentPointion);
-            TMP_Text roomText = go.GetComponentInChildren<TMP_Text>();
-            roomText.text = room.Name;
-            Button joinBtn = go.GetComponent<Button>();
-            joinBtn.onClick.AddListener(() => { Debug.Log("Joined"); });
+            RoomCell roomCell = go.GetComponent<RoomCell>();
+            roomCell.roomText.text = room.Name;
+            roomCell.joinBtn.onClick.AddListener(() => { Debug.Log("Joined"); });
         }
     }
 
