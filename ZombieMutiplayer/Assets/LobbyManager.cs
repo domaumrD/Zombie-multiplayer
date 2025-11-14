@@ -15,7 +15,9 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     private string gameVersion = "1";
     private bool reconnet = false;
 
-    public GameObject inputNickName;
+    public MyLobbyMain myLobbyMain;
+
+    //public GameObject inputNickName;
 
     public string myName;
     private Player[] players = PhotonNetwork.PlayerList;
@@ -75,13 +77,13 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
         gameStartBtn.onClick.AddListener(() =>
         {
-            PhotonNetwork.LoadLevel("Main");
+            PhotonNetwork.LoadLevel("Room");
         });
 
 
         lobbyText.text = "Title";
         PhotonNetwork.GameVersion = gameVersion;
-        inputNickName.SetActive(true);
+        myLobbyMain.inputNickName.SetActive(true);
         LobbyRoomList.SetActive(false);
         gameStartBtn.gameObject.SetActive(false);
         NolobbyRoomText.gameObject.SetActive(false);
@@ -98,7 +100,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsConnected)
         {
-            inputNickName.SetActive(false);
+            myLobbyMain.inputNickName.SetActive(false);
             JoinLobby();
         }
         else
