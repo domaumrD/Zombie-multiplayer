@@ -15,6 +15,8 @@ public class UIRoomList : MonoBehaviour
             GameObject go = Instantiate(cellPrefab, contentPointion);
             TMP_Text roomText = go.GetComponentInChildren<TMP_Text>();
             roomText.text = room.Name;
+            Button joinBtn = go.AddComponent<Button>();
+            joinBtn.onClick.AddListener(() => { Debug.Log("Joined"); });
         }
     }
 

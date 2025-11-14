@@ -214,12 +214,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         NolobbyRoomText.gameObject.SetActive(true);
         LobbyRoomList.gameObject.SetActive(true);
 
-        uiRoomList.Remove();
-
     }
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
+        uiRoomList.Remove();
+
         foreach (RoomInfo info in roomList)
         {
             if (info.RemovedFromList || info.PlayerCount == 0)
@@ -236,7 +236,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
         // 2) 전체 캐시 기준으로 리스트 만들기
         List<RoomInfo> allRooms = new List<RoomInfo>(cachedRooms.Values);
-
         Debug.Log($"OnRoomListUpdate rawCount: {roomList.Count}, cachedCount: {allRooms.Count}");
 
         uiRoomList.Create();
