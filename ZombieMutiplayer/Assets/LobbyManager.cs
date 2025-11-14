@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
@@ -153,6 +154,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         OnRoom();
     }
 
+   
+
     public void OnRoom()
     {
         leaveRoomBtn.gameObject.SetActive(true);
@@ -196,6 +199,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         Connect();
     }
 
+    public void ToJoinRoom(string roomName)
+    {
+        PhotonNetwork.JoinRoom(roomName);
+    }
+
     public void CreateRoom()
     {
         createRoomBtn.gameObject.SetActive(false);
@@ -218,18 +226,19 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
+
+        Debug.Log("RoomList Update");
+
         uiRoomList.Remove();
 
         foreach (RoomInfo info in roomList)
         {
             if (info.RemovedFromList || info.PlayerCount == 0)
-            {
-                // 아무도 없거나 삭제된 방은 캐시에서 제거
+            {               
                 cachedRooms.Remove(info.Name);
             }
             else
-            {
-                // 존재하는 방이면 캐시에 추가/갱신
+            {               
                 cachedRooms[info.Name] = info;
             }
         }
