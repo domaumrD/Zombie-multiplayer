@@ -34,6 +34,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public UIRoomList uiRoomList;
     public GameObject uiLoading;
 
+    public Button gameStartBtn;
+
     private void Awake()
     {
 
@@ -52,6 +54,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
+        PhotonNetwork.AutomaticallySyncScene = true;
+
         createRoomBtn.onClick.AddListener(() => { CreateRoom(); });
         leaveRoomBtn.onClick.AddListener(() => { LeaveRoom(); });
 
@@ -69,10 +73,17 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
         });
 
+        gameStartBtn.onClick.AddListener(() =>
+        {
+            PhotonNetwork.LoadLevel("Main");
+        });
+
+
         lobbyText.text = "Title";
         PhotonNetwork.GameVersion = gameVersion;
         inputNickName.SetActive(true);
         LobbyRoomList.SetActive(false);
+        gameStartBtn.gameObject.SetActive(false);
         NolobbyRoomText.gameObject.SetActive(false);
         createRoomBtn.gameObject.SetActive(false);
         leaveRoomBtn.gameObject.SetActive(false);
@@ -88,10 +99,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsConnected)
         {
             inputNickName.SetActive(false);
-
-            Debug.Log("test");
-            //PhotonNetwork.JoinRandomRoom();
-
             JoinLobby();
         }
         else
@@ -121,8 +128,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             createRoomBtn.gameObject.SetActive(true);
             Debug.Log("I'm in Lobby");
 
-        }
-       
+        }       
 
         Debug.Log($"내가 로비에 있는지 확인: {PhotonNetwork.InLobby}");
     }
@@ -135,6 +141,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         if (reconnet == true)
         {
             PhotonNetwork.JoinLobby();
+            reconnet = false;
         }
     }
 
@@ -149,8 +156,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         lobbyText.text = "Room";
 
         Debug.Log("OnJoinedRoom");
-        Debug.Log($"IsMasterClient: {PhotonNetwork.IsMasterClient}");
-
+       
         Debug.Log(PhotonNetwork.NickName);
 
         for (int i = 0; i < players.Length; i++)
@@ -170,6 +176,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public void OnRoom()
     {
         leaveRoomBtn.gameObject.SetActive(true);
+        gameStartBtn.gameObject.SetActive(false);
         Debug.Log($"{PhotonNetwork.CountOfRooms}");
 
         if (PhotonNetwork.InRoom)
@@ -181,6 +188,16 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             Debug.Log("현재 방 비공개 여부 : " + PhotonNetwork.CurrentRoom.IsVisible);
 
         }
+
+
+        Debug.Log($"<color=red>IsMasterClient: {PhotonNetwork.IsMasterClient}</color>");
+
+        if(PhotonNetwork.IsMasterClient)
+        {
+            gameStartBtn.gameObject.SetActive(true);
+        }
+
+
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)
