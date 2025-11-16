@@ -5,7 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
@@ -13,30 +12,16 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public static LobbyManager Instance;
 
     private string gameVersion = "1";
-    private bool reconnet = false;
-
-    public MyLobbyMain myLobbyMain;
-
-    //public GameObject inputNickName;
+    [HideInInspector]
+    public bool reconnet = false;
 
     public string myName;
     private Player[] players = PhotonNetwork.PlayerList;
-    public TMP_Text lobbyText;
-
-    public UINicknameView uiNicknameView;
-    public GameObject LobbyRoomList;
-    public TMP_Text NolobbyRoomText;
-
-    public Button createRoomBtn;
-    public Button leaveRoomBtn;
-    public Button checkBtn;
 
     public Dictionary<string, RoomInfo> cachedRooms = new Dictionary<string, RoomInfo>();
-
     public UIRoomList uiRoomList;
-    public GameObject uiLoading;
-
-    public Button gameStartBtn;
+    public MyLobbyMain myLobbyMain;
+    public RoomMain roomMain;
 
     private void Awake()
     {
@@ -56,45 +41,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
-        PhotonNetwork.AutomaticallySyncScene = true;
-
-        createRoomBtn.onClick.AddListener(() => { CreateRoom(); });
-        leaveRoomBtn.onClick.AddListener(() => { LeaveRoom(); });
-
-        checkBtn.onClick.AddListener(() =>
-        {
-
-            Debug.Log($"내가 로비에 있는지 확인: {PhotonNetwork.InLobby}");
-            Debug.Log($"내가 룸에 있는지 확인: {PhotonNetwork.InRoom}");
-            Debug.Log($"데이터 캐시 갯수 : {cachedRooms.Count}");            
-
-            foreach (RoomInfo room in cachedRooms.Values)
-            {
-                Debug.Log($"{room.Name}");
-            }
-
-        });
-
-        gameStartBtn.onClick.AddListener(() =>
-        {
-            PhotonNetwork.LoadLevel("Room");
-        });
-
-
-        lobbyText.text = "Title";
-        PhotonNetwork.GameVersion = gameVersion;
-        myLobbyMain.inputNickName.SetActive(true);
-        LobbyRoomList.SetActive(false);
-        gameStartBtn.gameObject.SetActive(false);
-        NolobbyRoomText.gameObject.SetActive(false);
-        createRoomBtn.gameObject.SetActive(false);
-        leaveRoomBtn.gameObject.SetActive(false);
-        uiLoading.gameObject.SetActive(false);
-        uiNicknameView.onClickSubmit = SetNickName;
+        PhotonNetwork.AutomaticallySyncScene = true;      
+        PhotonNetwork.GameVersion = gameVersion;  
         PhotonNetwork.ConnectUsingSettings();
     }
 
-    private void Connect()
+    public void Connect()
     {
         Debug.Log($"Isconnected:  {PhotonNetwork.IsConnected}");
 
@@ -118,20 +70,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedLobby()
     {
+        myLobbyMain = FindFirstObjectByType<MyLobbyMain>();
+        myLobbyMain.inputNickName.gameObject.SetActive(false);
+        myLobbyMain.SetLobby();
 
-        uiLoading.gameObject.SetActive(true);
-
-        if (PhotonNetwork.InLobby == true)
-        {
-            uiLoading.gameObject.SetActive(false);
-            lobbyText.text = "Lobby";
-            LobbyRoomList.SetActive(true);
-            NolobbyRoomText.gameObject.SetActive(true);
-            createRoomBtn.gameObject.SetActive(true);
-            Debug.Log("I'm in Lobby");
-
-        }       
-
+        uiRoomList = FindFirstObjectByType<UIRoomList>();
         Debug.Log($"내가 로비에 있는지 확인: {PhotonNetwork.InLobby}");
     }
 
@@ -155,7 +98,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        lobbyText.text = "Room";
+        roomMain = FindFirstObjectByType<RoomMain>();
+        //lobbyText.text = "Room";
 
         Debug.Log("OnJoinedRoom");
        
@@ -166,40 +110,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             Debug.Log($"{players[i].NickName} 입장");
         }
 
-        LobbyRoomList.SetActive(false);
-        NolobbyRoomText.gameObject.SetActive(false);
+        roomMain.LobbyRoomList.SetActive(false);
+        roomMain.NolobbyRoomText.gameObject.SetActive(false);
 
         //PhotonNetwork.LoadLevel("Main");
-        OnRoom();
-    }
-
-   
-
-    public void OnRoom()
-    {
-        leaveRoomBtn.gameObject.SetActive(true);
-        gameStartBtn.gameObject.SetActive(false);
-        Debug.Log($"{PhotonNetwork.CountOfRooms}");
-
-        if (PhotonNetwork.InRoom)
-        {
-            Debug.Log("현재 방 이름 : " + PhotonNetwork.CurrentRoom.Name);
-            Debug.Log("현재 방 인원수 : " + PhotonNetwork.CurrentRoom.PlayerCount);
-            Debug.Log("현재 방 최대인원수 : " + PhotonNetwork.CurrentRoom.MaxPlayers);
-            Debug.Log("현재 방 열려있는지 : " + PhotonNetwork.CurrentRoom.IsOpen);
-            Debug.Log("현재 방 비공개 여부 : " + PhotonNetwork.CurrentRoom.IsVisible);
-
-        }
-
-
-        Debug.Log($"<color=red>IsMasterClient: {PhotonNetwork.IsMasterClient}</color>");
-
-        if(PhotonNetwork.IsMasterClient)
-        {
-            gameStartBtn.gameObject.SetActive(true);
-        }
-
-
+        roomMain.OnRoom();
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)
@@ -218,42 +133,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         Debug.Log($"OnCreateRoomFailed {returnCode}, {message}");
     }
-
-    public void SetNickName(string nickName)
-    {
-        PhotonNetwork.ConnectUsingSettings();
-
-        myName = nickName;
-        PhotonNetwork.NickName = nickName;
-
-        Connect();
-    }
+        
 
     public void ToJoinRoom(string roomName)
     {
         PhotonNetwork.JoinRoom(roomName);
-    }
-
-    public void CreateRoom()
-    {
-        createRoomBtn.gameObject.SetActive(false);
-        Debug.Log("방을 만듭니다.");
-        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2, IsVisible = true });
-
-    }
-
-    public void LeaveRoom()
-    {        
-        Debug.Log("방에서 나갑니다");
-        Debug.Log(myName);
-        PhotonNetwork.LeaveRoom();
-        leaveRoomBtn.gameObject.SetActive(false);
-        createRoomBtn.gameObject.SetActive(true);
-        lobbyText.text = "Room";
-        NolobbyRoomText.gameObject.SetActive(true);
-        LobbyRoomList.gameObject.SetActive(true);
-
-    }
+    }       
 
     public override void OnLeftRoom()
     {
