@@ -103,16 +103,20 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         Debug.Log("OnJoinedRoom");       
         Debug.Log(PhotonNetwork.NickName);
 
-        for (int i = 0; i < players.Length; i++)
-        {
-            Debug.Log($"<color=green>{players[i].NickName} 입장 </color>" );
-        }
-
+       
         roomMain.LobbyRoomList.SetActive(false);
         roomMain.NolobbyRoomText.gameObject.SetActive(false);
 
         //PhotonNetwork.LoadLevel("Main");
         roomMain.OnRoom();
+    }
+
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        roomMain = FindFirstObjectByType<RoomMain>();
+
+        roomMain.uiRoomStatusList.Create();
+        Debug.Log($"입장: {newPlayer.NickName}");
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)

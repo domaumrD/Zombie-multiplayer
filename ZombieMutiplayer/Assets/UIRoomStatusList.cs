@@ -15,9 +15,10 @@ public class UIRoomStatusList : MonoBehaviour
 
         foreach (var player in temp.Values)
         {
+            Debug.Log($"<color=green> {player.NickName} </color>");
             GameObject go = Instantiate(cellPrefab, contentPointion);
             RoomCell roomcell = go.GetComponent<RoomCell>();
-            roomcell.userName.text = PhotonNetwork.NickName;
+            roomcell.userName.text = player.NickName;
             roomcell.status.text = "wait";
         }
        
