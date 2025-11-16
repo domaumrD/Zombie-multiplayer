@@ -8,13 +8,17 @@ public class RoomMain : MonoBehaviour
 {
     public GameObject LobbyRoomList;
     public TMP_Text NolobbyRoomText;
+    public TMP_Text roomText;
 
     public Button leaveRoomBtn;
     public UIRoomList uiRoomList;
     public Button gameStartBtn;
 
+    public UIRoomStatusList uiRoomStatusList;
+
     void Start()
     {
+        roomText.text = "room";
         gameStartBtn.gameObject.SetActive(false);
 
         gameStartBtn.onClick.AddListener(() =>
@@ -29,8 +33,9 @@ public class RoomMain : MonoBehaviour
     {
         leaveRoomBtn.gameObject.SetActive(true);
         gameStartBtn.gameObject.SetActive(false);
-        Debug.Log($"{PhotonNetwork.CountOfRooms}");
+        Debug.Log($"<color=red>{PhotonNetwork.CountOfRooms}</color>");
 
+       
         if (PhotonNetwork.InRoom)
         {
             Debug.Log("현재 방 이름 : " + PhotonNetwork.CurrentRoom.Name);

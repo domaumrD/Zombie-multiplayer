@@ -171,5 +171,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
         uiRoomList.Create();
 
+
+        myLobbyMain.SetLobbyRoomText(allRooms.Count);
     }
 }

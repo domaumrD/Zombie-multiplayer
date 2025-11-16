@@ -33,9 +33,7 @@ public class MyLobbyMain : MonoBehaviour
       
         uiLoading.gameObject.SetActive(false);
         createRoomBtn.onClick.AddListener(() => { CreateRoom(); });
-           
-
-        lobbyText.text = "Title";
+          
         checkBtn.onClick.AddListener(() =>
         {
 
@@ -85,7 +83,20 @@ public class MyLobbyMain : MonoBehaviour
             NolobbyRoomText.gameObject.SetActive(true);
             createRoomBtn.gameObject.SetActive(true);
             Debug.Log("I'm in Lobby");
+                       
+        }
+    }
 
+    public void SetLobbyRoomText(int roomCount)
+    {
+        if (roomCount > 0)
+        {
+            Debug.Log("<color=yellow> Test </color>");
+            NolobbyRoomText.gameObject.SetActive(false);
+        }
+        else
+        {
+            NolobbyRoomText.gameObject.SetActive(true);
         }
     }
 
