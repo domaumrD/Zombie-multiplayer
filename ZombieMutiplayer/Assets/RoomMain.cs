@@ -11,7 +11,7 @@ public class RoomMain : MonoBehaviour
     public TMP_Text roomText;
 
     public Button leaveRoomBtn;
-    public UIRoomList uiRoomList;
+   
     public Button gameStartBtn;
 
     public UIRoomStatusList uiRoomStatusList;
@@ -53,6 +53,8 @@ public class RoomMain : MonoBehaviour
         {
             gameStartBtn.gameObject.SetActive(true);
         }
+
+        uiRoomStatusList.Create();
     }
 
 
