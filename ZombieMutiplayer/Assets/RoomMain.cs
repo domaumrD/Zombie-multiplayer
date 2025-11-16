@@ -3,16 +3,19 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RoomMain : MonoBehaviour
+public class RoomMain : MonoBehaviourPunCallbacks
 {
     public GameObject LobbyRoomList;
     public TMP_Text NolobbyRoomText;
     public TMP_Text roomText;
 
-    public Button leaveRoomBtn;   
+    public Button leaveRoomBtn;
     public Button gameStartBtn;
+    public Button setReadyBtn;
 
     public UIRoomStatusList uiRoomStatusList;
+
+    public string curStatus;
 
     void Start()
     {
@@ -24,6 +27,11 @@ public class RoomMain : MonoBehaviour
             PhotonNetwork.LoadLevel("Room");
         });
 
+        setReadyBtn.onClick.AddListener(() =>
+        {
+            uiRoomStatusList.SetStatus(PhotonNetwork.NickName);
+        });
+
         leaveRoomBtn.onClick.AddListener(() => { LeaveRoom(); });
     }
 
@@ -32,7 +40,7 @@ public class RoomMain : MonoBehaviour
         leaveRoomBtn.gameObject.SetActive(true);
         gameStartBtn.gameObject.SetActive(false);
         Debug.Log($"<color=red>{PhotonNetwork.CountOfRooms}</color>");
-       
+
         if (PhotonNetwork.InRoom)
         {
             Debug.Log("현재 방 이름 : " + PhotonNetwork.CurrentRoom.Name);
@@ -40,7 +48,7 @@ public class RoomMain : MonoBehaviour
             Debug.Log("현재 방 최대인원수 : " + PhotonNetwork.CurrentRoom.MaxPlayers);
             Debug.Log("현재 방 열려있는지 : " + PhotonNetwork.CurrentRoom.IsOpen);
             Debug.Log("현재 방 비공개 여부 : " + PhotonNetwork.CurrentRoom.IsVisible);
-          
+
         }
 
         Debug.Log($"<color=red>IsMasterClient: {PhotonNetwork.IsMasterClient}</color>");
@@ -49,18 +57,23 @@ public class RoomMain : MonoBehaviour
         {
             gameStartBtn.gameObject.SetActive(true);
         }
+        else
+        {
+            setReadyBtn.gameObject.SetActive(true);
+        }
 
         uiRoomStatusList.contentPointion.gameObject.SetActive(true);
         uiRoomStatusList.Create();
     }
-     
+
 
     public void LeaveRoom()
     {
         Debug.Log("방에서 나갑니다");
-     
+
         PhotonNetwork.LeaveRoom();
+        uiRoomStatusList.Create();
         PhotonNetwork.LoadLevel("MyLobby");
-       
+
     }
 }

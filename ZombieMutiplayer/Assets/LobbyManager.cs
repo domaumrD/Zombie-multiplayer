@@ -114,9 +114,14 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         roomMain = FindFirstObjectByType<RoomMain>();
-
         roomMain.uiRoomStatusList.Create();
         Debug.Log($"입장: {newPlayer.NickName}");
+    }
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        roomMain = FindFirstObjectByType<RoomMain>();
+        roomMain.uiRoomStatusList.Create(otherPlayer.NickName);
+        Debug.Log($"퇴장: {otherPlayer.NickName}");
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)
