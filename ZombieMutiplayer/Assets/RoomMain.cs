@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RoomMain : MonoBehaviourPunCallbacks
+public class RoomMain : MonoBehaviour
 {
     public GameObject LobbyRoomList;
     public TMP_Text NolobbyRoomText;
@@ -38,7 +38,7 @@ public class RoomMain : MonoBehaviourPunCallbacks
     public void OnRoom()
     {
         leaveRoomBtn.gameObject.SetActive(true);
-        gameStartBtn.gameObject.SetActive(false);
+        
         Debug.Log($"<color=red>{PhotonNetwork.CountOfRooms}</color>");
 
         if (PhotonNetwork.InRoom)
@@ -53,12 +53,14 @@ public class RoomMain : MonoBehaviourPunCallbacks
 
         Debug.Log($"<color=red>IsMasterClient: {PhotonNetwork.IsMasterClient}</color>");
 
-        if (PhotonNetwork.IsMasterClient)
+        if (PhotonNetwork.IsMasterClient == true)
         {
             gameStartBtn.gameObject.SetActive(true);
+            setReadyBtn.gameObject.SetActive(false);
         }
         else
         {
+            gameStartBtn.gameObject.SetActive(false);
             setReadyBtn.gameObject.SetActive(true);
         }
 
