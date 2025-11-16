@@ -43,9 +43,7 @@ public class UIRoomStatusList : MonoBehaviour
             roomcell.userName.text = player.NickName;
             roomcell.status.text = "wait";
         }
-
     }
-
 
     public void Remove()
     {

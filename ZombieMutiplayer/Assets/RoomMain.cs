@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RoomMain : MonoBehaviour
+public class RoomMain : MonoBehaviourPun
 {
     public GameObject LobbyRoomList;
     public TMP_Text NolobbyRoomText;
@@ -14,8 +14,14 @@ public class RoomMain : MonoBehaviour
     public Button setReadyBtn;
 
     public UIRoomStatusList uiRoomStatusList;
+    public PhotonView pv;
 
     public string curStatus;
+
+    private void Awake()
+    {
+        pv = GetComponent<PhotonView>();
+    }
 
     void Start()
     {
@@ -29,10 +35,16 @@ public class RoomMain : MonoBehaviour
 
         setReadyBtn.onClick.AddListener(() =>
         {
-            uiRoomStatusList.SetStatus(PhotonNetwork.NickName);
+            pv.RPC("SettingStatus", RpcTarget.All, PhotonNetwork.NickName);
         });
 
         leaveRoomBtn.onClick.AddListener(() => { LeaveRoom(); });
+    }
+
+    [PunRPC]
+    public void SettingStatus(string playerName)
+    {
+        uiRoomStatusList.SetStatus(playerName);
     }
 
     public void OnRoom()
