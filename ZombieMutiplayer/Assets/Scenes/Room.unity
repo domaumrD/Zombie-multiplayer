@@ -1623,8 +1623,8 @@ MonoBehaviour:
   NolobbyRoomText: {fileID: 1852385928}
   roomText: {fileID: 1451723740}
   leaveRoomBtn: {fileID: 901866770}
-  uiRoomList: {fileID: 0}
   gameStartBtn: {fileID: 1507721714}
+  uiRoomStatusList: {fileID: 137738797}
 --- !u!1 &1852385926
 GameObject:
   m_ObjectHideFlags: 0

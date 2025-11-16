@@ -11,12 +11,16 @@ public class UIRoomStatusList : MonoBehaviour
     {
         Remove();
 
-        for(int i = 0; i < PhotonNetwork.CurrentRoom.PlayerCount; i++)
+        var temp = PhotonNetwork.CurrentRoom.Players;
+
+        foreach (var player in temp.Values)
         {
-            RoomCell roomcell = cellPrefab.GetComponent<RoomCell>();
+            GameObject go = Instantiate(cellPrefab, contentPointion);
+            RoomCell roomcell = go.GetComponent<RoomCell>();
             roomcell.userName.text = PhotonNetwork.NickName;
             roomcell.status.text = "wait";
         }
+       
     }
 
 

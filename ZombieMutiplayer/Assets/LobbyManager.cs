@@ -99,15 +99,13 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         roomMain = FindFirstObjectByType<RoomMain>();
-        //lobbyText.text = "Room";
 
-        Debug.Log("OnJoinedRoom");
-       
+        Debug.Log("OnJoinedRoom");       
         Debug.Log(PhotonNetwork.NickName);
 
         for (int i = 0; i < players.Length; i++)
         {
-            Debug.Log($"{players[i].NickName} 입장");
+            Debug.Log($"<color=green>{players[i].NickName} 입장 </color>" );
         }
 
         roomMain.LobbyRoomList.SetActive(false);
