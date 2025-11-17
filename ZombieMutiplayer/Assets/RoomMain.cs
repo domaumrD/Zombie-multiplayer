@@ -45,6 +45,19 @@ public class RoomMain : MonoBehaviourPun
     public void SettingStatus(string playerName)
     {
         uiRoomStatusList.SetStatus(playerName);
+
+        if(PhotonNetwork.IsMasterClient == true)
+        {
+
+            Debug.Log($"readyCount : {uiRoomStatusList.readyCount}");
+            Debug.Log($"CountOfPlayers : {PhotonNetwork.CountOfPlayersInRooms - 1}");
+
+            if(uiRoomStatusList.readyCount == PhotonNetwork.CountOfPlayers -1)
+            {
+                gameStartBtn.gameObject.SetActive(true);
+            }
+        }
+
     }
 
     public void OnRoom()

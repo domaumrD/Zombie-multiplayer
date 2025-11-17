@@ -6,6 +6,7 @@ public class UIRoomStatusList : MonoBehaviour
 {
     public GameObject cellPrefab;
     public Transform contentPointion;
+    public int readyCount = 0;
 
     public void Create()
     {
@@ -57,6 +58,8 @@ public class UIRoomStatusList : MonoBehaviour
 
     public void SetStatus(string playerName)
     {
+        readyCount = 0;
+
         for (int i = 0; i < contentPointion.childCount; i++)
         {
             RoomCell roomcell = contentPointion.GetChild(i).gameObject.GetComponent<RoomCell>(); 
@@ -66,14 +69,19 @@ public class UIRoomStatusList : MonoBehaviour
                 if(roomcell.status.text == "wait")
                 {
                     roomcell.status.text = "ready";
+                    readyCount++;
                 }
                 else
                 {
                     roomcell.status.text = "wait";
+                    readyCount--;
                 }
             }
 
         }
+
+        Debug.Log($"ready Count : {readyCount}");
+
 
     }
 
